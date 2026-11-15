@@ -37,3 +37,4 @@ async def health(db: AsyncSession = Depends(get_db)) -> dict:
         "version": settings.version,
         "time": datetime.now(UTC).isoformat(),
     }
+
