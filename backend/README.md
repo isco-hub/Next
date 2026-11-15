@@ -122,3 +122,6 @@ All actions are recorded in the append-only `audit_log` table.
 This system provides regional climate-informed crop rotation advice. It is not a substitute
 for advice from a qualified extension officer. Actual conditions on individual plots may differ
 from regional satellite data.
+
+## Environment Variables
+Copy `.env.example` to `.env` and fill in the required values before running.
