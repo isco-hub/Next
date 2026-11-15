@@ -165,3 +165,4 @@ def _snapshot_to_dict(s: OutlookSnapshot, cell: GridCell) -> dict:
         "notice": s.notice,
         "attribution": s.attribution,
     }
+
