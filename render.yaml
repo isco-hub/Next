@@ -130,6 +130,7 @@ services:
     name: nextcrop-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
 
   # ── Frontend (Static Site) ─────────────────────────────────────────────────
   - type: web
