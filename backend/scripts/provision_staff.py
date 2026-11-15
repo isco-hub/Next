@@ -2,8 +2,8 @@
 
 Usage:
     python -m scripts.provision_staff \
-        --phone +256770000001 --role extension_officer --name "Demo Officer" \
-        --district lira --subcounty lira.lira
+        --phone +256770123456 --role extension_officer --name "Aciro Grace" \
+        --district lira --constituency lira.erute-north --subcounty lira.adekokwok
 """
 from __future__ import annotations
 
@@ -41,8 +41,10 @@ async def provision(args: argparse.Namespace) -> None:
         user.role = args.role
         user.display_name = args.name
         user.district_id = args.district
+        user.constituency_id = args.constituency
         user.subcounty_ids = args.subcounty
         user.language = "en"
+        user.approval_status = "approved"
         await db.commit()
         print(f"Provisioned {user.id} as {user.role}.")
 
@@ -53,6 +55,7 @@ def main() -> None:
     parser.add_argument("--role", required=True, choices=STAFF_ROLES)
     parser.add_argument("--name", required=True)
     parser.add_argument("--district", default=None)
+    parser.add_argument("--constituency", default=None)
     parser.add_argument("--subcounty", action="append", default=[])
     asyncio.run(provision(parser.parse_args()))
 

@@ -1,4 +1,4 @@
-import type { Role, Session, User } from "@nextcrop/api-client";
+import type { OtpVerifyResult, Role, Session, User } from "@nextcrop/api-client";
 import {
   createContext,
   useCallback,
@@ -14,9 +14,14 @@ import { clearSession, readSession, writeSession } from "./session";
 export interface SignUpInput {
   phone: string;
   displayName: string;
+  role?: Role;
   districtId?: string;
+  constituencyId?: string;
   subcountyIds?: string[];
 }
+
+const isSession = (result: OtpVerifyResult): result is Session =>
+  "token" in result;
 
 interface AuthContextValue {
   session: Session | null;
@@ -42,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const request = await api.requestOtp({ phone, purpose: "signin" });
       const next = await api.verifyOtp(request.request_id, code);
+      if (!isSession(next)) throw new Error(next.message);
       writeSession(next);
       setSession(next);
       return next;
@@ -56,12 +62,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const request = await api.requestOtp({
         phone: input.phone,
         purpose: "signup",
+        role: input.role,
         display_name: input.displayName,
         language: "en",
         district_id: input.districtId,
+        constituency_id: input.constituencyId,
         subcounty_ids: input.subcountyIds ?? [],
       });
       const next = await api.verifyOtp(request.request_id, code);
+      if (!isSession(next)) throw new Error(next.message);
       writeSession(next);
       setSession(next);
       return next;

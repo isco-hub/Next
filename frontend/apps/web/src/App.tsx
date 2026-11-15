@@ -79,6 +79,11 @@ const AdminPackEditorPage = lazy(() =>
 const AdminAuditPage = lazy(() =>
   import("./pages/AdminAuditPage").then((module) => ({ default: module.AdminAuditPage })),
 );
+const AdminOfficerApprovalsPage = lazy(() =>
+  import("./pages/AdminOfficerApprovalsPage").then((module) => ({
+    default: module.AdminOfficerApprovalsPage,
+  })),
+);
 const TranslationPage = lazy(() =>
   import("./pages/TranslationPage").then((module) => ({ default: module.TranslationPage })),
 );
@@ -216,6 +221,14 @@ export const App = () => (
           element={
             <RequireRole roles={[...ADMIN_ROLES]}>
               <AdminAuditPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="admin/officers"
+          element={
+            <RequireRole roles={["admin"]}>
+              <AdminOfficerApprovalsPage />
             </RequireRole>
           }
         />

@@ -275,6 +275,7 @@ export interface OtpRequestInput {
   display_name?: string;
   language?: LanguageCode;
   district_id?: string;
+  constituency_id?: string;
   subcounty_ids?: string[];
 }
 
@@ -285,13 +286,17 @@ export interface OtpRequestResult {
   dev_code?: string | null;
 }
 
+export type ApprovalStatus = "pending" | "approved" | "rejected";
+
 export interface User {
   id: string;
   role: Role;
   display_name: string | null;
   language: LanguageCode;
   district_id: string | null;
+  constituency_id?: string | null;
   subcounty_ids: string[];
+  approval_status?: ApprovalStatus;
   consent_version: string | null;
   mfa_required: boolean;
 }
@@ -302,6 +307,26 @@ export interface Session {
   user: User;
   expires_at: string;
   refresh_expires_at?: string;
+}
+
+export interface PendingApprovalResult {
+  status: "pending_approval";
+  message: string;
+  user: User;
+}
+
+export type OtpVerifyResult = Session | PendingApprovalResult;
+
+export interface OfficerRegistration {
+  id: string;
+  display_name: string | null;
+  phone: string;
+  language: LanguageCode;
+  district_id: string | null;
+  constituency_id: string | null;
+  subcounty_ids: string[];
+  approval_status: ApprovalStatus;
+  created_at: string;
 }
 
 export interface ConsentInput {

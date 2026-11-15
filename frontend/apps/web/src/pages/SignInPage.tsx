@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { ApiError, type Role, type Session } from "@nextcrop/api-client";
+import {
+  ApiError,
+  constituencyOptions,
+  districtOptions,
+  subcountyOptionsForConstituency,
+  type Role,
+  type Session,
+} from "@nextcrop/api-client";
 import { useI18n } from "@nextcrop/i18n";
 import { Banner, Button, Field, Icon, inputClass, selectClass } from "@nextcrop/ui";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +39,10 @@ export const SignInPage = () => {
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [districtId, setDistrictId] = useState("");
+  const [constituencyId, setConstituencyId] = useState("");
+  const [subcountyId, setSubcountyId] = useState("");
+  const [pendingMessage, setPendingMessage] = useState("");
   const [requestId, setRequestId] = useState("");
   const [code, setCode] = useState("");
   const [devCode, setDevCode] = useState("");
@@ -66,6 +77,12 @@ export const SignInPage = () => {
     navigate(roleHome(session.user.role), { replace: true });
   };
 
+  const officerSignup = mode === "signup" && selectedRole === "extension_officer";
+  const roleOptions =
+    mode === "signup"
+      ? ROLE_OPTIONS.filter((option) => option.role !== "admin")
+      : ROLE_OPTIONS;
+
   const requestCode = async () => {
     if (phone.replace(/\D/g, "").length < 9) {
       setError(t("auth.phoneInvalid"));
@@ -73,6 +90,10 @@ export const SignInPage = () => {
     }
     if (mode === "signup" && displayName.trim().length < 2) {
       setError(t("auth.nameInvalid"));
+      return;
+    }
+    if (officerSignup && (!districtId || !constituencyId || !subcountyId)) {
+      setError(t("auth.locationRequired"));
       return;
     }
     if (!consent) {
@@ -88,6 +109,9 @@ export const SignInPage = () => {
         role: selectedRole,
         display_name: mode === "signup" ? displayName.trim() : undefined,
         language: "en",
+        district_id: officerSignup ? districtId : undefined,
+        constituency_id: officerSignup ? constituencyId : undefined,
+        subcounty_ids: officerSignup && subcountyId ? [subcountyId] : [],
       });
       setRequestId(request.request_id);
       setStep("code");
@@ -113,8 +137,14 @@ export const SignInPage = () => {
     setVerifying(true);
     setError("");
     try {
-      const session = await api.verifyOtp(requestId, code);
-      await finish(session);
+      const result = await api.verifyOtp(requestId, code);
+      if (!("token" in result)) {
+        setPendingMessage(result.message);
+        setStep("phone");
+        setCode("");
+        return;
+      }
+      await finish(result);
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 422
@@ -135,8 +165,12 @@ export const SignInPage = () => {
     setError("");
     try {
       const request = await api.requestOtp(demoPhone);
-      const session = await api.verifyOtp(request.request_id, "123456");
-      await finish(session);
+      const result = await api.verifyOtp(request.request_id, "123456");
+      if (!("token" in result)) {
+        setPendingMessage(result.message);
+        return;
+      }
+      await finish(result);
     } catch (err) {
       setError(errorMessage(err, t));
     } finally {
@@ -175,6 +209,11 @@ export const SignInPage = () => {
       />
 
       {error ? <Banner tone="error">{error}</Banner> : null}
+      {pendingMessage ? (
+        <Banner tone="info" title={t("auth.pendingTitle")}>
+          {pendingMessage}
+        </Banner>
+      ) : null}
 
       {step === "phone" ? (
         <section className="panel stack">
@@ -184,6 +223,7 @@ export const SignInPage = () => {
               onClick={() => {
                 setMode("signin");
                 setError("");
+                setPendingMessage("");
               }}
             >
               {t("auth.signInTab")}
@@ -192,7 +232,11 @@ export const SignInPage = () => {
               variant={mode === "signup" ? "primary" : "secondary"}
               onClick={() => {
                 setMode("signup");
+                setSelectedRole((current) =>
+                  current === "admin" ? "farmer" : current,
+                );
                 setError("");
+                setPendingMessage("");
               }}
             >
               {t("auth.createAccount")}
@@ -206,18 +250,21 @@ export const SignInPage = () => {
               value={selectedRole}
               onChange={(event) => {
                 setSelectedRole(event.target.value as Role);
+                setDistrictId("");
+                setConstituencyId("");
+                setSubcountyId("");
                 setError("");
               }}
             >
-              {ROLE_OPTIONS.map((option) => (
+              {roleOptions.map((option) => (
                 <option key={option.role} value={option.role}>
                   {t(option.labelKey)}
                 </option>
               ))}
             </select>
           </Field>
-          {mode === "signup" && selectedRole !== "farmer" ? (
-            <p className="muted small">{t("auth.staffSignupNote")}</p>
+          {officerSignup ? (
+            <p className="muted small">{t("auth.officerSignupNote")}</p>
           ) : null}
 
           {mode === "signup" ? (
@@ -231,6 +278,79 @@ export const SignInPage = () => {
                 onChange={(event) => setDisplayName(event.target.value)}
               />
             </Field>
+          ) : null}
+
+          {officerSignup ? (
+            <>
+              <Field
+                label={t("auth.districtLabel")}
+                htmlFor="signup-district"
+                required
+              >
+                <select
+                  id="signup-district"
+                  className={selectClass(false)}
+                  value={districtId}
+                  onChange={(event) => {
+                    setDistrictId(event.target.value);
+                    setConstituencyId("");
+                    setSubcountyId("");
+                  }}
+                >
+                  <option value="">{t("auth.selectPlaceholder")}</option>
+                  {districtOptions().map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field
+                label={t("auth.constituencyLabel")}
+                htmlFor="signup-constituency"
+                required
+              >
+                <select
+                  id="signup-constituency"
+                  className={selectClass(false)}
+                  value={constituencyId}
+                  disabled={!districtId}
+                  onChange={(event) => {
+                    setConstituencyId(event.target.value);
+                    setSubcountyId("");
+                  }}
+                >
+                  <option value="">{t("auth.selectPlaceholder")}</option>
+                  {constituencyOptions(districtId).map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field
+                label={t("auth.subcountyLabel")}
+                htmlFor="signup-subcounty"
+                required
+              >
+                <select
+                  id="signup-subcounty"
+                  className={selectClass(false)}
+                  value={subcountyId}
+                  disabled={!constituencyId}
+                  onChange={(event) => setSubcountyId(event.target.value)}
+                >
+                  <option value="">{t("auth.selectPlaceholder")}</option>
+                  {subcountyOptionsForConstituency(constituencyId).map(
+                    (option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </Field>
+            </>
           ) : null}
 
           <Field

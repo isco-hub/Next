@@ -97,6 +97,11 @@ export const AdminDashboardPage = () => {
             <h3>{t("dashboard.manageRulePacks")}</h3>
             <p className="muted small">{t("dashboard.manageRulePacksIntro")}</p>
           </Link>
+          <Link className="quickCard" to="/admin/officers">
+            <div className="quickCardIcon"><Icon name="users" size={20} /></div>
+            <h3>{t("dashboard.officerApprovals")}</h3>
+            <p className="muted small">{t("dashboard.officerApprovalsIntro")}</p>
+          </Link>
           <Link className="quickCard" to="/admin/audit">
             <div className="quickCardIcon"><Icon name="file" size={20} /></div>
             <h3>{t("dashboard.audit")}</h3>

@@ -29,6 +29,9 @@ import type {
   Session,
   UssdCallbackRequest,
   UssdCallbackResult,
+  OtpVerifyResult,
+  ApprovalStatus,
+  OfficerRegistration,
   User,
 } from "./types";
 
@@ -313,11 +316,35 @@ export class NextCropApi {
     }).then((result) => result.data);
   }
 
-  verifyOtp(requestId: string, code: string): Promise<Session> {
-    return this.request<Session>("/auth/otp/verify", {
+  verifyOtp(requestId: string, code: string): Promise<OtpVerifyResult> {
+    return this.request<OtpVerifyResult>("/auth/otp/verify", {
       method: "POST",
       body: { request_id: requestId, code },
     }).then((result) => result.data);
+  }
+
+  listOfficerRegistrations(status?: ApprovalStatus): Promise<OfficerRegistration[]> {
+    const search = status ? `?status=${encodeURIComponent(status)}` : "";
+    return this.request<OfficerRegistration[]>(
+      `/admin/officer-registrations${search}`,
+    ).then((result) => result.data);
+  }
+
+  approveOfficerRegistration(id: string): Promise<OfficerRegistration> {
+    return this.request<OfficerRegistration>(
+      `/admin/officer-registrations/${encodeURIComponent(id)}/approve`,
+      { method: "POST" },
+    ).then((result) => result.data);
+  }
+
+  rejectOfficerRegistration(
+    id: string,
+    reason?: string,
+  ): Promise<OfficerRegistration> {
+    return this.request<OfficerRegistration>(
+      `/admin/officer-registrations/${encodeURIComponent(id)}/reject`,
+      { method: "POST", body: reason ? { reason } : {} },
+    ).then((result) => result.data);
   }
 
   refreshSession(refreshToken: string): Promise<Session> {

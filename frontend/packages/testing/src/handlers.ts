@@ -21,8 +21,10 @@ import {
   type Goal,
   type Health,
   type LanguageCode,
+  type OfficerRegistration,
   type OfficerSummary,
   type OtpRequestResult,
+  type PendingApprovalResult,
   type Plot,
   type PlotInput,
   type Recommendation,
@@ -60,6 +62,21 @@ import {
 
 const V1 = "/v1";
 const LATENCY_MS = 90;
+
+const officerRegistrations: OfficerRegistration[] = [
+  {
+    id: "user-officer-pending",
+    display_name: "Aciro Grace",
+    phone: "+256772000111",
+    language: "en",
+    district_id: "lira",
+    constituency_id: "lira.erute-north",
+    subcounty_ids: ["lira.agweng"],
+    approval_status: "pending",
+    created_at: "2026-11-14T09:30:00.000Z",
+  },
+];
+const pendingOfficerSignups = new Map<string, OfficerRegistration>();
 
 const problem = (
   status: number,
@@ -614,15 +631,37 @@ export const handlers = [
 
   http.post(`${V1}/auth/otp/request`, async ({ request }) => {
     await delay(LATENCY_MS);
-    const body = await readBody<{ phone?: string }>(request);
+    const body = await readBody<{
+      phone?: string;
+      purpose?: string;
+      role?: Role;
+      display_name?: string;
+      district_id?: string;
+      constituency_id?: string;
+      subcounty_ids?: string[];
+    }>(request);
     const phone = normalisePhone(body?.phone ?? "");
     if (!phoneValid(phone)) {
       return problem(422, "Enter a valid Ugandan phone number", undefined, [
         { field: "phone", message: "Use a number such as 0770 000 000." },
       ]);
     }
+    const requestId = `otp_${phone}`;
+    if (body?.purpose === "signup" && body.role === "extension_officer") {
+      pendingOfficerSignups.set(requestId, {
+        id: newId("officer"),
+        display_name: body.display_name ?? null,
+        phone,
+        language: "en",
+        district_id: body.district_id ?? null,
+        constituency_id: body.constituency_id ?? null,
+        subcounty_ids: body.subcounty_ids ?? [],
+        approval_status: "pending",
+        created_at: nowIso(),
+      });
+    }
     const result: OtpRequestResult = {
-      request_id: `otp_${phone}`,
+      request_id: requestId,
       expires_in_seconds: 300,
       channel: "sms",
     };
@@ -638,6 +677,29 @@ export const handlers = [
     }
     if (body.code !== "123456") {
       return problem(401, "Incorrect code", "Use the demo code 123456.");
+    }
+    const pending = pendingOfficerSignups.get(body.request_id);
+    if (pending) {
+      pendingOfficerSignups.delete(body.request_id);
+      officerRegistrations.unshift(pending);
+      const result: PendingApprovalResult = {
+        status: "pending_approval",
+        message:
+          "Registration submitted. An administrator must approve your account before you can sign in.",
+        user: {
+          id: pending.id,
+          role: "extension_officer",
+          display_name: pending.display_name,
+          language: pending.language,
+          district_id: pending.district_id,
+          constituency_id: pending.constituency_id,
+          subcounty_ids: pending.subcounty_ids,
+          approval_status: "pending",
+          consent_version: "2026-01",
+          mfa_required: false,
+        },
+      };
+      return HttpResponse.json(result);
     }
     const session: Session = createSessionForPhone(phone);
     return HttpResponse.json(session);
@@ -1091,6 +1153,38 @@ export const handlers = [
     return HttpResponse.json(result);
   }),
 
+  http.get(`${V1}/admin/officer-registrations`, async ({ request }) => {
+    await delay(LATENCY_MS);
+    const auth = authorised(request, ["admin"]);
+    if (isAuthError(auth)) return auth.response;
+    const status = new URL(request.url).searchParams.get("status");
+    return HttpResponse.json(
+      officerRegistrations.filter(
+        (entry) => !status || entry.approval_status === status,
+      ),
+    );
+  }),
+
+  http.post(`${V1}/admin/officer-registrations/:id/approve`, async ({ request, params }) => {
+    await delay(LATENCY_MS);
+    const auth = authorised(request, ["admin"]);
+    if (isAuthError(auth)) return auth.response;
+    const entry = officerRegistrations.find((item) => item.id === params.id);
+    if (!entry) return problem(404, "Registration not found");
+    entry.approval_status = "approved";
+    return HttpResponse.json(entry);
+  }),
+
+  http.post(`${V1}/admin/officer-registrations/:id/reject`, async ({ request, params }) => {
+    await delay(LATENCY_MS);
+    const auth = authorised(request, ["admin"]);
+    if (isAuthError(auth)) return auth.response;
+    const entry = officerRegistrations.find((item) => item.id === params.id);
+    if (!entry) return problem(404, "Registration not found");
+    entry.approval_status = "rejected";
+    return HttpResponse.json(entry);
+  }),
+
   http.get(`${V1}/admin/audit-log`, async ({ request }) => {
     await delay(LATENCY_MS);
     const auth = authorised(request, ["agronomist", "admin"]);
@@ -1280,6 +1374,9 @@ export const contractPaths = [
   "POST /v1/admin/rule-packs/:id/rollback",
   "POST /v1/admin/rule-packs/:id/golden-tests",
   "POST /v1/admin/rule-packs/:id/simulate",
+  "GET /v1/admin/officer-registrations",
+  "POST /v1/admin/officer-registrations/:id/approve",
+  "POST /v1/admin/officer-registrations/:id/reject",
   "GET /v1/admin/audit-log",
   "POST /v1/ussd/callback",
 ];

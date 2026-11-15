@@ -16,6 +16,13 @@ export interface District {
   subcounties: Subcounty[];
 }
 
+export interface Constituency {
+  id: string;
+  name: string;
+  district_id: string;
+  subcounty_ids: string[];
+}
+
 export const SUPPORTED_REGION_NAME = "Lango sub-region, Uganda";
 
 /**
@@ -132,6 +139,43 @@ export const DISTRICTS: readonly District[] = [
   ]),
 ];
 
+const constituency = (
+  districtId: string,
+  name: string,
+  subcountyNames: string[],
+): Constituency => ({
+  id: `${districtId}.${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+  name,
+  district_id: districtId,
+  subcounty_ids: subcountyNames.map(
+    (subcountyName) =>
+      `${districtId}.${subcountyName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+  ),
+});
+
+export const CONSTITUENCIES: readonly Constituency[] = [
+  constituency("lira", "Lira Municipality", ["Lira"]),
+  constituency("lira", "Erute North", ["Adekokwok", "Agweng"]),
+  constituency("lira", "Erute South", ["Barr", "Ogur", "Aromo"]),
+  constituency("alebtong", "Ajuri", ["Alebtong", "Aloi", "Abako"]),
+  constituency("alebtong", "Moroto", ["Amugu", "Omoro", "Adwir"]),
+  constituency("apac", "Maruzi", ["Aduku", "Ibuje"]),
+  constituency("apac", "Maruzi North", ["Akokoro", "Chegere"]),
+  constituency("apac", "Apac Municipality", ["Apac", "Arocha"]),
+  constituency("oyam", "Oyam North", ["Oyam", "Aber", "Acaba"]),
+  constituency("oyam", "Oyam South", ["Iceme", "Minakulu", "Ngai"]),
+  constituency("kole", "Kole North", ["Kole", "Aboke", "Akalo"]),
+  constituency("kole", "Kole South", ["Alito", "Ayer", "Bala"]),
+  constituency("dokolo", "Dokolo North", ["Dokolo", "Bata", "Kangai"]),
+  constituency("dokolo", "Dokolo South", ["Kwera", "Okwang", "Adok"]),
+  constituency("amolatar", "Kioga", ["Amolatar", "Agikdak", "Aputi"]),
+  constituency("amolatar", "Kioga North", ["Etam", "Namasale", "Arwotcek"]),
+  constituency("otuke", "Otuke", ["Otuke", "Adwari", "Ogwete"]),
+  constituency("otuke", "Otuke East", ["Olur", "Orum", "Okwang"]),
+  constituency("kwania", "Kwania", ["Kwania", "Chawente", "Inomo"]),
+  constituency("kwania", "Kwania North", ["Nambieso", "Aduku", "Abongomola"]),
+];
+
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
 export const distanceKm = (a: GeoPoint, b: GeoPoint): number => {
@@ -232,4 +276,23 @@ export const subcountyOptions = (districtId: string) =>
     value: entry.id,
     label: entry.name,
   }));
+
+export const findConstituency = (
+  constituencyId: string | undefined,
+): Constituency | undefined =>
+  CONSTITUENCIES.find((entry) => entry.id === constituencyId);
+
+export const constituencyOptions = (districtId: string) =>
+  CONSTITUENCIES.filter((entry) => entry.district_id === districtId).map(
+    (entry) => ({ value: entry.id, label: entry.name }),
+  );
+
+export const subcountyOptionsForConstituency = (constituencyId: string) => {
+  const chosen = findConstituency(constituencyId);
+  if (!chosen) return [];
+  const allowed = new Set(chosen.subcounty_ids);
+  return (findDistrict(chosen.district_id)?.subcounties ?? [])
+    .filter((entry) => allowed.has(entry.id))
+    .map((entry) => ({ value: entry.id, label: entry.name }));
+};
 

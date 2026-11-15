@@ -147,3 +147,48 @@ test("admin audit table is accessible", async ({ page }) => {
   ).toBeVisible();
   await expectNoAxeViolations(page, "admin audit");
 });
+
+test("an extension officer can register and sees the pending approval message", async ({
+  page,
+}) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByLabel("Choose your role").selectOption("extension_officer");
+  await page.getByLabel("Your name").fill("Aciro Grace");
+  await page.getByLabel("District").selectOption("lira");
+  await page.getByLabel("Constituency").selectOption("lira.erute-north");
+  await page.getByLabel("Sub-county").selectOption("lira.agweng");
+  await page.getByLabel("Phone number").fill("0772000222");
+  await page.getByLabel("I agree").check();
+  await page.getByRole("button", { name: "Create account and send code" }).click();
+  await page.getByLabel("Six-digit code").fill("123456");
+  await page.getByRole("button", { name: "Sign in" }).click();
+
+  await expect(page.getByText("Registration received", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(/administrator must approve your account/i),
+  ).toBeVisible();
+  await expectNoAxeViolations(page, "pending officer registration");
+});
+
+test("an admin can approve an extension officer registration", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByLabel("I agree").check();
+  await page.getByRole("button", { name: "Continue as demo admin" }).click();
+  await expect(page).toHaveURL(/\/admin\/dashboard$/);
+
+  await page.getByRole("button", { name: "Menu" }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("link", { name: "Officer approvals" })
+    .click();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Extension officer approvals" }),
+  ).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Aciro Grace" })).toBeVisible();
+  await page.getByRole("button", { name: "Approve" }).first().click();
+  await expect(
+    page.getByText("No registrations match this filter."),
+  ).toBeVisible();
+  await expectNoAxeViolations(page, "officer approvals");
+});

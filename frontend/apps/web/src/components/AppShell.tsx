@@ -74,6 +74,7 @@ export const AppShell = () => {
     { to: "/", label: t("nav.home"), icon: "sprout" },
     { to: "/admin/dashboard", label: t("nav.adminDashboard"), icon: "shield" },
     { to: "/admin/rulepacks", label: t("nav.rulePacks"), icon: "file" },
+    { to: "/admin/officers", label: t("nav.officerApprovals"), icon: "users" },
     { to: "/reports", label: t("nav.reports"), icon: "chart" },
     { to: "/admin/audit", label: t("nav.audit"), icon: "users" },
   ];

@@ -155,7 +155,11 @@ class User(Base):
     display_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
     language: Mapped[str] = mapped_column(String(8), nullable=False, default="en")
     district_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    constituency_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     subcounty_ids: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    approval_status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="approved", server_default="approved"
+    )
     consent_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
     mfa_required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -284,9 +288,11 @@ class OtpRequest(Base):
     msisdn_encrypted: Mapped[str] = mapped_column(Text, nullable=False, default="")
     code_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     purpose: Mapped[str] = mapped_column(String(16), nullable=False, default="signin")
+    role: Mapped[str] = mapped_column(String(32), nullable=False, default="farmer")
     display_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
     language: Mapped[str] = mapped_column(String(8), nullable=False, default="en")
     district_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    constituency_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     subcounty_ids: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
     request_ip_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

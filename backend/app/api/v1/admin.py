@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -11,7 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.deps import CurrentUser, require_roles
 from app.core.errors import ConflictError, ForbiddenError, NotFoundError, ValidationAppError
-from app.db.models import AuditLog, RulePack
+from app.core.security import decrypt_msisdn
+from app.db.models import AuditLog, RulePack, User
 from app.db.session import get_db
 from app.domain.rules.engine import EngineInputs, run_engine
 from app.domain.rules.loader import compute_hash, load_pack
@@ -347,4 +347,85 @@ def _run_golden_tests(yaml_document: str) -> tuple[bool, list[dict]]:
             "pass": passed,
         })
     return all_passed, results
+
+class OfficerDecisionBody(BaseModel):
+    reason: str | None = None
+
+
+@router.get("/admin/officer-registrations")
+async def list_officer_registrations(
+    status: str | None = None,
+    db: AsyncSession = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("admin")),
+) -> list[dict]:
+    query = select(User).where(User.role == "extension_officer")
+    if status:
+        query = query.where(User.approval_status == status)
+    result = await db.execute(query.order_by(User.created_at.desc()).limit(200))
+    return [_officer_registration(u) for u in result.scalars().all()]
+
+
+@router.post("/admin/officer-registrations/{user_id}/approve")
+async def approve_officer_registration(
+    user_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("admin")),
+) -> dict:
+    officer = await _get_officer(db, user_id)
+    officer.approval_status = "approved"
+    await _audit(
+        db, user.user_id, "approve_officer", f"user:{user_id}",
+        officer.display_name or officer.id,
+    )
+    await db.flush()
+    await db.refresh(officer)
+    return _officer_registration(officer)
+
+
+@router.post("/admin/officer-registrations/{user_id}/reject")
+async def reject_officer_registration(
+    user_id: str,
+    body: OfficerDecisionBody | None = None,
+    db: AsyncSession = Depends(get_db),
+    user: CurrentUser = Depends(require_roles("admin")),
+) -> dict:
+    officer = await _get_officer(db, user_id)
+    officer.approval_status = "rejected"
+    await _audit(
+        db, user.user_id, "reject_officer", f"user:{user_id}",
+        body.reason if body and body.reason else officer.display_name or officer.id,
+    )
+    await db.flush()
+    await db.refresh(officer)
+    return _officer_registration(officer)
+
+
+async def _get_officer(db: AsyncSession, user_id: str) -> User:
+    result = await db.execute(
+        select(User).where(User.id == user_id, User.role == "extension_officer")
+    )
+    officer = result.scalar_one_or_none()
+    if officer is None:
+        raise NotFoundError("Extension officer registration not found.")
+    return officer
+
+
+def _officer_registration(user: User) -> dict:
+    phone = ""
+    if user.msisdn_encrypted:
+        try:
+            phone = "+" + decrypt_msisdn(user.msisdn_encrypted)
+        except Exception:
+            phone = ""
+    return {
+        "id": user.id,
+        "display_name": user.display_name,
+        "phone": phone,
+        "language": user.language,
+        "district_id": user.district_id,
+        "constituency_id": user.constituency_id,
+        "subcounty_ids": user.subcounty_ids,
+        "approval_status": user.approval_status,
+        "created_at": user.created_at.isoformat(),
+    }
 

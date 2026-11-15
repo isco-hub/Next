@@ -36,6 +36,7 @@ class OtpRequestBody(BaseModel):
     display_name: str | None = Field(default=None, max_length=128)
     language: str = "en"
     district_id: str | None = None
+    constituency_id: str | None = None
     subcounty_ids: list[str] = Field(default_factory=list)
 
 
@@ -99,10 +100,33 @@ async def request_otp(
         raise ValidationAppError(
             "This phone is not registered with the selected role."
         )
-    if user is None and body.role not in (None, "farmer"):
-        raise ValidationAppError(
-            "Staff accounts are created by the NextCrop administrator."
-        )
+
+    effective_role = body.role or (user.role if user else "farmer")
+    if body.purpose == "signup":
+        if effective_role not in ("farmer", "extension_officer"):
+            raise ValidationAppError(
+                "Only farmers and extension officers can register themselves."
+            )
+        if effective_role == "extension_officer":
+            if not body.display_name or len(body.display_name.strip()) < 2:
+                raise ValidationAppError("Enter the extension officer's full name.")
+            if not body.district_id or not body.constituency_id:
+                raise ValidationAppError(
+                    "Select a district, constituency and sub-county."
+                )
+            if len(body.subcounty_ids) != 1 or not body.subcounty_ids[0]:
+                raise ValidationAppError(
+                    "Select one sub-county for the extension officer."
+                )
+    if user is not None and body.purpose == "signin":
+        if user.approval_status == "pending":
+            raise ValidationAppError(
+                "This registration is awaiting administrator approval."
+            )
+        if user.approval_status == "rejected":
+            raise ValidationAppError(
+                "This registration was not approved. Submit a new registration."
+            )
 
     code = generate_otp()
     code_hash = hashlib.sha256(code.encode()).hexdigest()
@@ -114,9 +138,11 @@ async def request_otp(
         msisdn_encrypted=encrypt_msisdn(body.phone),
         code_hash=code_hash,
         purpose=body.purpose,
+        role=effective_role,
         display_name=body.display_name,
         language=body.language,
         district_id=body.district_id,
+        constituency_id=body.constituency_id,
         subcounty_ids=body.subcounty_ids,
         request_ip_hash=request_ip_hash,
         expires_at=expires_at,
@@ -191,16 +217,40 @@ async def verify_otp(
             id=str(uuid.uuid4()),
             msisdn_hash=otp.msisdn_hash,
             msisdn_encrypted=otp.msisdn_encrypted,
-            role="farmer",
+            role=otp.role or "farmer",
             display_name=otp.display_name,
             language=otp.language,
             district_id=otp.district_id,
+            constituency_id=otp.constituency_id,
             subcounty_ids=otp.subcounty_ids,
+            approval_status="pending" if otp.role == "extension_officer" else "approved",
         )
         db.add(user)
         await db.flush()
-    elif otp.purpose == "signup" and otp.display_name and not user.display_name:
-        user.display_name = otp.display_name
+    elif otp.purpose == "signup":
+        if otp.role == "extension_officer":
+            user.approval_status = "pending"
+            user.display_name = otp.display_name or user.display_name
+            user.district_id = otp.district_id or user.district_id
+            user.constituency_id = otp.constituency_id or user.constituency_id
+            user.subcounty_ids = otp.subcounty_ids or user.subcounty_ids
+        elif otp.display_name and not user.display_name:
+            user.display_name = otp.display_name
+        await db.flush()
+
+    if user.approval_status == "pending":
+        return {
+            "status": "pending_approval",
+            "message": (
+                "Registration submitted. An administrator must approve your "
+                "account before you can sign in."
+            ),
+            "user": _user_dict(user),
+        }
+    if user.approval_status == "rejected":
+        raise UnauthorizedError(
+            "This registration was not approved. Submit a new registration."
+        )
 
     session_id = str(uuid.uuid4())
     refresh_token = create_refresh_token(user.id, session_id)
@@ -301,7 +351,9 @@ def _user_dict(user: User) -> dict:
         "display_name": user.display_name,
         "language": user.language,
         "district_id": user.district_id,
+        "constituency_id": user.constituency_id,
         "subcounty_ids": user.subcounty_ids,
+        "approval_status": user.approval_status,
         "consent_version": user.consent_version,
         "mfa_required": user.mfa_required,
     }
