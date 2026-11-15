@@ -1,0 +1,248 @@
+pack_id: lango-rotation
+version: 2.0.0
+status: approved
+
+seasons:
+  A: {plant_from: "03-15", plant_to: "04-30"}
+  B: {plant_from: "08-15", plant_to: "09-30"}
+
+families:
+  cereal: [maize, sorghum, finger_millet]
+  legume: [soya, bean, cowpea]
+  oilseed: [groundnut, simsim, sunflower]
+  perennial: [cassava]
+
+season_gate:
+  maize:        {A: best,        B: conditional}
+  sorghum:      {A: good,        B: good}
+  finger_millet: {A: good,        B: good}
+  soya:         {A: good,        B: good}
+  groundnut:    {A: good,        B: conditional}
+  bean:         {A: conditional, B: best}
+  cowpea:       {A: good,        B: good}
+  simsim:       {A: risky,       B: best}
+  sunflower:    {A: good,        B: good}
+  cassava:      {A: good,        B: good}
+
+hard_rules:
+  - id: HR-01
+    when: {previous_crop_family: cereal}
+    action: exclude_family
+    family: cereal
+    for_seasons: 1
+    rationale_key: hr01.cereal_after_cereal
+
+  - id: HR-02
+    when: {flag: striga}
+    action: exclude_family
+    family: cereal
+    for_seasons: 2
+    rationale_key: hr02.striga_cereal_ban
+
+  - id: HR-03
+    when: {flag: cassava_disease}
+    action: exclude_crop
+    crop: cassava
+    for_seasons: 2
+    rationale_key: hr03.cassava_disease_ban
+
+  - id: HR-04
+    when: {flag: groundnut_disease}
+    action: exclude_crop
+    crop: groundnut
+    for_seasons: 1
+    rationale_key: hr04.groundnut_disease_ban
+
+  - id: HR-05
+    when: {soil_type: sandy}
+    action: exclude_crop
+    crop: bean
+    for_seasons: 0
+    rationale_key: hr05.bean_sandy_soil
+
+  - id: HR-06
+    when: {moisture_class: dry}
+    action: exclude_crop
+    crop: maize
+    for_seasons: 0
+    rationale_key: hr06.maize_dry_season
+
+  - id: HR-07
+    when: {moisture_class: wet}
+    action: exclude_crop
+    crop: simsim
+    for_seasons: 0
+    rationale_key: hr07.simsim_wet_season
+
+  - id: HR-08
+    when: {season_gate: excluded}
+    action: exclude_crop
+    crop: __gate__
+    for_seasons: 0
+    rationale_key: hr08.season_gate_excluded
+
+  - id: HR-09
+    when: {crop: cassava}
+    action: block_seasons
+    crop: cassava
+    for_seasons: 2
+    rationale_key: hr09.cassava_block
+
+  - id: HR-10
+    when: {previous_crop_family: legume}
+    action: exclude_family
+    family: legume
+    for_seasons: 1
+    rationale_key: hr10.legume_after_legume
+
+moisture_gate:
+  dry:
+    exclude: [maize]
+    prefer: [sorghum, finger_millet, simsim, sunflower, cowpea]
+    warn: []
+  normal:
+    exclude: []
+    prefer: []
+    warn: []
+  wet:
+    exclude: [simsim]
+    prefer: [maize, soya, bean]
+    warn: [groundnut, bean]
+
+soft_rules:
+  - id: SR-01
+    when: {flag: armyworm}
+    action: reduce_priority
+    crop: maize
+    delta: -2.0
+    warning_key: sr01.armyworm_maize_risk
+
+  - id: SR-02
+    when: {flag: low_fertility}
+    action: add_warning
+    family: cereal
+    warning_key: sr02.low_fertility_legume_first
+
+  - id: SR-03
+    when: {previous_crop_family: legume}
+    action: reduce_priority
+    family: legume
+    delta: -1.0
+    rationale_key: sr03.legume_after_legume
+
+goal_weights:
+  restore_soil:
+    soya: 3.0
+    groundnut: 3.0
+    cowpea: 3.0
+    bean: 2.5
+    finger_millet: 2.0
+    sorghum: 1.5
+    maize: 1.0
+    simsim: 1.0
+    sunflower: 1.0
+    cassava: 0.5
+  max_cash:
+    maize: 3.0
+    groundnut: 3.0
+    soya: 2.5
+    sunflower: 2.0
+    simsim: 2.0
+    bean: 2.5
+    sorghum: 1.5
+    cowpea: 1.0
+    finger_millet: 1.0
+    cassava: 2.0
+  drought_survival:
+    sorghum: 3.0
+    finger_millet: 3.0
+    cowpea: 2.5
+    simsim: 2.5
+    sunflower: 2.0
+    cassava: 2.0
+    groundnut: 1.5
+    bean: 1.0
+    soya: 1.0
+    maize: 0.5
+
+next_crop_lookup:
+  maize: [soya, groundnut, bean, cowpea, sorghum, finger_millet]
+  sorghum: [soya, groundnut, bean, cowpea, maize, finger_millet]
+  finger_millet: [soya, groundnut, bean, cowpea, maize, sorghum]
+  soya: [maize, sorghum, finger_millet, simsim, sunflower]
+  groundnut: [maize, sorghum, finger_millet, simsim, sunflower]
+  bean: [maize, sorghum, finger_millet, simsim, sunflower]
+  cowpea: [maize, sorghum, finger_millet, simsim, sunflower]
+  simsim: [soya, groundnut, bean, cowpea, maize]
+  sunflower: [soya, groundnut, bean, cowpea, maize]
+  cassava: [soya, groundnut, bean, cowpea]
+  other: [maize, groundnut, soya, bean, cowpea, sorghum]
+
+fallback_crop: sorghum
+
+messages:
+  hr01.cereal_after_cereal:
+    en: "Avoid cereal after cereal to break pest cycles."
+    laj: "Kica cot me cereal ka cereal woko."
+  hr02.striga_cereal_ban:
+    en: "Striga detected: no cereals for 2 seasons to starve the weed."
+    laj: "Striga onongo: kica cereal pi kare aryo."
+  hr03.cassava_disease_ban:
+    en: "Cassava disease history: rest cassava for 2 seasons."
+    laj: "Two me mogo onongo: yee mogo pi kare aryo."
+  hr04.groundnut_disease_ban:
+    en: "Groundnut disease: skip groundnut this season."
+    laj: "Two me apyeri: kica apyeri kare man."
+  hr05.bean_sandy_soil:
+    en: "Beans need moisture-retaining soil; sandy soil is too dry."
+    laj: "Kado mito lowo ma tye ki pii; lowo me yap tek tutwal."
+  hr06.maize_dry_season:
+    en: "Dry conditions: maize needs reliable rain. Choose drought-tolerant crops."
+    laj: "Kec pii: kal mito kot ma gum. Yer cot ma kwany kec."
+  hr07.simsim_wet_season:
+    en: "Excess moisture causes simsim to rot. Avoid in wet conditions."
+    laj: "Pii mapol mako simsim two. Kica i kare me pii mapol."
+  hr08.season_gate_excluded:
+    en: "This crop is not suitable for this season in Lango."
+    laj: "Cot man pe ber pi kare man i Lango."
+  hr09.cassava_block:
+    en: "Cassava occupies the plot for 2 seasons; other crops planned around it."
+    laj: "Mogo tye i poto pi kare aryo; cot mukene giketo i ŋete."
+  hr10.legume_after_legume:
+    en: "Avoid legume after legume to prevent disease build-up and nitrogen imbalance."
+    laj: "Kica legume ka legume pi kwanyo two ki nitrogen ma dwoŋ."
+  sr01.armyworm_maize_risk:
+    en: "Fall armyworm pressure: consider alternatives to maize this season."
+    laj: "Twol me kal tye: neno cot mukene i kare man."
+  sr02.low_fertility_legume_first:
+    en: "Low fertility: plant a legume first to restore soil nitrogen."
+    laj: "Lowo rem: cub legume con pi dwoko nitrogen i lowo."
+  sr03.legume_after_legume:
+    en: "Rotating legumes reduces disease build-up."
+    laj: "Yero legume two pe dongo."
+  rationale.best_season:
+    en: "Excellent season fit for this crop in Lango."
+    laj: "Kare ber tutwal pi cot man i Lango."
+  rationale.good_season:
+    en: "Good season fit. Reliable yields expected."
+    laj: "Kare ber. Cam ma gum."
+  rationale.conditional_season:
+    en: "Possible this season with careful management."
+    laj: "Twero i kare man ka irito maber."
+  rationale.goal_restore_soil:
+    en: "Chosen to restore soil health for future seasons."
+    laj: "Oyero pi dwoko lowo pi kare ma bino."
+  rationale.goal_max_cash:
+    en: "Chosen for highest expected market return."
+    laj: "Oyero pi lim mapol i coc."
+  rationale.goal_drought_survival:
+    en: "Chosen for drought tolerance to secure a harvest."
+    laj: "Oyero pi kwany kec pi moko cam."
+  rationale.fallback:
+    en: "Safe fallback: sorghum is reliable in all Lango conditions."
+    laj: "Cot ma gum: kal mapol ber i Lango weng."
+  disclaimer:
+    en: "This plan is based on regional climate data and agronomic rules. It is not a substitute for advice from your extension officer. Actual conditions on your plot may differ."
+    laj: "Cik man obedo ki data me lik me piny ki cik me pur. Pe loko tam me ladit me pur mamegi. Tic i potoni twero bedo mapatpat."
+
+disclaimer_key: disclaimer

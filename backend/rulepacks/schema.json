@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NextCrop Rule Pack",
+  "type": "object",
+  "required": ["pack_id", "version", "status", "seasons", "families", "season_gate", "hard_rules", "moisture_gate", "soft_rules", "goal_weights", "fallback_crop", "messages"],
+  "additionalProperties": false,
+  "properties": {
+    "pack_id": { "type": "string" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "status": { "type": "string", "enum": ["draft", "in_review", "approved", "published"] },
+    "seasons": {
+      "type": "object",
+      "required": ["A", "B"],
+      "properties": {
+        "A": { "$ref": "#/$defs/season_window" },
+        "B": { "$ref": "#/$defs/season_window" }
+      }
+    },
+    "families": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+    "season_gate": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "A": { "type": "string", "enum": ["best", "good", "conditional", "risky", "excluded"] },
+          "B": { "type": "string", "enum": ["best", "good", "conditional", "risky", "excluded"] }
+        }
+      }
+    },
+    "hard_rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/hard_rule" }
+    },
+    "moisture_gate": {
+      "type": "object",
+      "properties": {
+        "dry": { "$ref": "#/$defs/moisture_action" },
+        "normal": { "$ref": "#/$defs/moisture_action" },
+        "wet": { "$ref": "#/$defs/moisture_action" }
+      }
+    },
+    "soft_rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/soft_rule" }
+    },
+    "goal_weights": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "number" }
+      }
+    },
+    "next_crop_lookup": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "fallback_crop": { "type": "string" },
+    "messages": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["en"],
+        "properties": {
+          "en": { "type": "string", "maxLength": 500 },
+          "laj": { "type": "string", "maxLength": 500 }
+        }
+      }
+    },
+    "disclaimer_key": { "type": "string" }
+  },
+  "$defs": {
+    "season_window": {
+      "type": "object",
+      "required": ["plant_from", "plant_to"],
+      "properties": {
+        "plant_from": { "type": "string", "pattern": "^\\d{2}-\\d{2}$" },
+        "plant_to": { "type": "string", "pattern": "^\\d{2}-\\d{2}$" }
+      }
+    },
+    "hard_rule": {
+      "type": "object",
+      "required": ["id", "action"],
+      "properties": {
+        "id": { "type": "string" },
+        "when": { "type": "object" },
+        "action": { "type": "string", "enum": ["exclude_crop", "exclude_family", "require_gap", "block_seasons"] },
+        "crop": { "type": "string" },
+        "family": { "type": "string" },
+        "for_seasons": { "type": "integer" },
+        "rationale_key": { "type": "string" }
+      }
+    },
+    "soft_rule": {
+      "type": "object",
+      "required": ["id", "action"],
+      "properties": {
+        "id": { "type": "string" },
+        "when": { "type": "object" },
+        "action": { "type": "string", "enum": ["reduce_priority", "add_warning", "add_intercrop"] },
+        "crop": { "type": "string" },
+        "family": { "type": "string" },
+        "delta": { "type": "number" },
+        "warning_key": { "type": "string" },
+        "rationale_key": { "type": "string" }
+      }
+    },
+    "moisture_action": {
+      "type": "object",
+      "properties": {
+        "exclude": { "type": "array", "items": { "type": "string" } },
+        "prefer": { "type": "array", "items": { "type": "string" } },
+        "warn": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

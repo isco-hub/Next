@@ -1,0 +1,39 @@
+# NextCrop SMS templates (Appendix B, SRS)
+# All messages <= 160 characters (GSM-7) or <= 70 characters (UCS-2)
+# Leb Lango text must be approved by a native speaker before shipping.
+
+sms.otp:
+  en: "NextCrop: Your verification code is {code}. Valid for 5 minutes. Do not share this code."
+  laj: "NextCrop: Namba mamegi me check ni {code}. Ber pi dakika 5. Pe cit ki namba man bot dano mukene."
+
+sms.plan:
+  en: "NextCrop: Next {crop1}, then {crop2}, then {crop3}. {crop1} feeds your soil. Ask your extension officer. STOP to end."
+  laj: "NextCrop: Cub {crop1}, ka lacen {crop2}, ka lacen {crop3}. Penyo ladit me pur mamegi. STOP pi giko."
+
+sms.consent:
+  en: "NextCrop: Reply YES to get farming advice by SMS. Costs follow your plan. Reply STOP anytime."
+  laj: "NextCrop: Cik YES pi nongo tam me pur ki SMS. Cik STOP kare mo."
+
+sms.alert.onset:
+  en: "NextCrop: Rains have started in your area. Wait for steady rain before planting. STOP to end."
+  laj: "NextCrop: Kot ocako i kabedo mamegi. Kur kot ma gum ka icub. STOP pi giko."
+
+sms.alert.dry_spell:
+  en: "NextCrop: Dry spell of {days} days in your area. Protect your crops. STOP to end."
+  laj: "NextCrop: Kec pii pi nino {days} i kabedo mamegi. Gwok cot mamegi. STOP pi giko."
+
+sms.alert.planting_window:
+  en: "NextCrop: Planting window for Season {season} opens {date}. Prepare your plot. STOP to end."
+  laj: "NextCrop: Kare me cub pi Kare {season} yabo {date}. Yubo potoni. STOP pi giko."
+
+sms.help:
+  en: "NextCrop: Dial *123# for crop advice. Reply STOP to unsubscribe. Visit nextcrop.ug for more."
+  laj: "NextCrop: Cak *123# pi tam me pur. Cik STOP pi giko. Neno nextcrop.ug pi lok mukene."
+
+sms.opt_out:
+  en: "NextCrop: You have been unsubscribed. Dial *123# anytime to get advice again."
+  laj: "NextCrop: Igikogi. Cak *123# kare mo pi nongo tam odoco."
+
+sms.opt_in:
+  en: "NextCrop: Welcome back! Dial *123# for your crop plan."
+  laj: "NextCrop: Wubone odoco! Cak *123# pi cik me pur mamegi."
