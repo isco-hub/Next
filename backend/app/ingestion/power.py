@@ -133,3 +133,4 @@ async def backfill_power(
         current = date(current.year + 1, 1, 1)
 
     return all_records
+
