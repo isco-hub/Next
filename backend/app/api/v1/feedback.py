@@ -86,3 +86,4 @@ def _fb_dict(fb: Feedback) -> dict:
         "rule_ids": fb.rule_ids,
         "created_at": fb.created_at.isoformat(),
     }
+
