@@ -94,3 +94,4 @@ class TestNasaOutageSimulation:
         )
         assert "NASA" in result.attribution
         assert len(result.attribution) > 10
+
