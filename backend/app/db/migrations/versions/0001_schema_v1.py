@@ -264,3 +264,4 @@ def downgrade() -> None:
     op.drop_table("climatology")
     op.drop_table("climate_daily")
     op.drop_table("grid_cells")
+
