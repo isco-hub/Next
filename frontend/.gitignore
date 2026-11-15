@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+.vite/
+storybook-static/
+playwright-report/
+test-results/
+*.local
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+apps/web/dev-dist/

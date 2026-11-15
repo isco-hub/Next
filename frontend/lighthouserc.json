@@ -1,0 +1,28 @@
+{
+  "ci": {
+    "collect": {
+      "url": ["http://localhost:4173/", "http://localhost:4173/location"],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "simulate",
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638,
+          "cpuSlowdownMultiplier": 4
+        }
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 3000 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 3000 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 300 }]
+      }
+    },
+    "upload": { "target": "temporary-public-storage" }
+  }
+}
