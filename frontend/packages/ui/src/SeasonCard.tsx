@@ -120,3 +120,4 @@ export const SeasonCard = ({ season, detailed = false }: SeasonCardProps) => {
     </li>
   );
 };
+
