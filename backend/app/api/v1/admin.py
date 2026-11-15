@@ -347,3 +347,4 @@ def _run_golden_tests(yaml_document: str) -> tuple[bool, list[dict]]:
             "pass": passed,
         })
     return all_passed, results
+
