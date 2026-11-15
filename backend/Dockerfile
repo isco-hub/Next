@@ -12,6 +12,7 @@ FROM base AS runtime
 RUN pip install --no-cache-dir --upgrade pip setuptools
 COPY pyproject.toml .
 COPY app ./app
+ARG CACHE_BUST=1
 RUN pip install --no-cache-dir .
 COPY . .
 RUN chmod +x start.sh
