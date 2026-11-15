@@ -227,3 +227,4 @@ async def _check_spend() -> None:
         # TODO: integrate with Sentry/PagerDuty alert in BE-507
 
     await engine.dispose()
+
