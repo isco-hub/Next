@@ -283,3 +283,4 @@ def _no_data_outlook(season: str, ref_date: date) -> OutlookComputation:
         notice="No satellite data available. Using safe defaults.",
         attribution="No data available. Using climatological defaults.",
     )
+
