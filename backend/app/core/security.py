@@ -113,3 +113,4 @@ def generate_otp() -> str:
 def is_ugandan_number(phone: str) -> bool:
     digits = _normalise_phone(phone)
     return digits.startswith("256") and len(digits) == 12
+
