@@ -91,3 +91,4 @@ export const ONSET_KEY = {
 
 export const confidenceTone = (confidence: string): "success" | "warning" | "danger" =>
   confidence === "high" ? "success" : confidence === "medium" ? "warning" : "danger";
+
