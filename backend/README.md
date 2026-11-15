@@ -125,3 +125,8 @@ from regional satellite data.
 
 ## Environment Variables
 Copy `.env.example` to `.env` and fill in the required values before running.
+
+## Running Tests
+```
+pytest tests/
+```
