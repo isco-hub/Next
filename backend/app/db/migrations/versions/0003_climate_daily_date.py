@@ -35,3 +35,4 @@ def downgrade() -> None:
         existing_nullable=False,
         postgresql_using="date::timestamp",
     )
+
