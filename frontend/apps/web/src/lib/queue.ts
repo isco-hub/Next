@@ -71,3 +71,4 @@ export const useOfflineQueue = (): void => {
     };
   }, [online, showToast, t]);
 };
+
