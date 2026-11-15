@@ -31,3 +31,4 @@ def test_golden(case: dict, pack: dict) -> None:
 def test_all_golden_cases_covered() -> None:
     """Ensure we have at least 12 golden cases."""
     assert len(GOLDEN_CASES) >= 12
+
