@@ -381,3 +381,4 @@ def _build_trace(
         }
         for c, score in sorted(candidates.items(), key=lambda x: x[1], reverse=True)
     ]
+
