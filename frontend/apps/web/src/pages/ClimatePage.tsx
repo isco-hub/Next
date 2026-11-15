@@ -94,7 +94,14 @@ export const ClimatePage = () => {
           title={t("climate.title")}
           subtitle={t("climate.subtitle")}
         />
-        <QueryErrorState error={query.error} onRetry={() => void query.refetch()} />
+        <div className="panel stack">
+          <Banner tone="warn" title={t("climate.noDataTitle")}>
+            {t("climate.noDataBody")}
+          </Banner>
+          <Button onClick={() => navigate("/location")} icon={<Icon name="arrow-left" size={18} />}>
+            {t("location.changeLocation")}
+          </Button>
+        </div>
       </div>
     );
   }
