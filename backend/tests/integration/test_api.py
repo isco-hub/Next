@@ -70,3 +70,4 @@ async def test_ussd_callback_basic(client: AsyncClient) -> None:
     response = await client.post("/v1/ussd/callback", json=payload)
     assert response.status_code == 200
     assert response.text.startswith("CON") or response.text.startswith("END")
+
