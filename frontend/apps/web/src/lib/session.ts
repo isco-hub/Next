@@ -32,3 +32,4 @@ export const clearSession = (): void => {
 };
 
 export const currentToken = (): string | null => readSession()?.token ?? null;
+
