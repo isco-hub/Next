@@ -18,3 +18,4 @@ export const StatCard = ({ label, value, hint }: StatCardProps) => (
 export const StatGrid = ({ children }: { children: ReactNode }) => (
   <div className={styles.statGrid}>{children}</div>
 );
+
