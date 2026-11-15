@@ -303,3 +303,4 @@ async def bulk_sms(
         "segments_per_message": segments,
         "total_segments": total * segments,
     }
+
