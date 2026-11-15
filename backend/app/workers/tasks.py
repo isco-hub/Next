@@ -282,3 +282,4 @@ def _compute_climatology(records: list[dict], cell_id: str) -> list[dict]:
         })
 
     return clim_rows
+
