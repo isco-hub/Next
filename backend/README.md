@@ -1,5 +1,7 @@
 # NextCrop Backend
 
+> Production-ready FastAPI service for crop advisory data.
+
 Satellite-informed crop rotation advice for smallholder farmers in the Lango sub-region, Uganda.
 
 ## Stack
