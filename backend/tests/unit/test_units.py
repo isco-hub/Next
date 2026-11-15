@@ -156,3 +156,4 @@ class TestSecurity:
         h1 = hash_msisdn("0772123456")
         h2 = hash_msisdn("+256772123456")
         assert h1 == h2
+
