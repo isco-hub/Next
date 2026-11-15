@@ -107,3 +107,4 @@ async def validation_error_handler(request: Request, exc: ValidationError) -> JS
 async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
     trace_id = getattr(request.state, "trace_id", str(uuid.uuid4()))
     return _problem_response(500, "about:blank", "Internal Server Error", None, trace_id)
+
