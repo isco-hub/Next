@@ -49,3 +49,4 @@ export const usePwaUpdate = (): { needRefresh: boolean; update: () => void } => 
     },
   };
 };
+
