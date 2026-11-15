@@ -475,3 +475,4 @@ export interface UssdCallbackResult {
   response: string;
   session_id: string;
 }
+
