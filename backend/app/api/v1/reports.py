@@ -85,3 +85,4 @@ async def report_summary(
         "adoption_funnel": adoption_funnel,
         "follow_rate_by_rule": follow_rate_by_rule,
     }
+
