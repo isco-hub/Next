@@ -73,3 +73,4 @@ export const clearDrafts = (): void => {
     // Ignore storage failures.
   }
 };
+
