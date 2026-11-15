@@ -48,3 +48,4 @@ export const selectClass = (hasError: boolean, extra = "") =>
 
 export const textareaClass = (hasError: boolean, extra = "") =>
   `${styles.textarea} ${hasError ? styles.inputError : ""} ${extra}`.trim();
+
