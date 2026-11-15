@@ -118,3 +118,4 @@ class TestQualityChecks:
         ]
         gaps = detect_gaps(records, "PRECTOTCORR", 5)
         assert date(2027, 3, 3).isoformat() in gaps
+
