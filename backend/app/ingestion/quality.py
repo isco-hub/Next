@@ -66,3 +66,4 @@ def detect_gaps(
         if d not in dates:
             gaps.append(d.isoformat())
     return gaps
+
