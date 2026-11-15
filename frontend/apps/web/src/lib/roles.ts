@@ -9,3 +9,4 @@ export const ROLE_HOME: Record<Role, string> = {
 };
 
 export const roleHome = (role: Role): string => ROLE_HOME[role];
+
