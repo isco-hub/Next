@@ -152,3 +152,4 @@ def test_hard_rules_never_violated(
         # HR-07: wet -> no simsim
         if moisture_class == "wet":
             assert crop != "simsim", f"HR-07 violated: simsim chosen in wet conditions"
+
