@@ -119,6 +119,29 @@ export const SignInPage = () => {
       }
       await finish(result);
     } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        // Backend not yet updated — fall back to OTP flow
+        try {
+          const request = await api.requestOtp({
+            phone,
+            purpose: mode,
+            role: selectedRole,
+            display_name: mode === "signup" ? displayName.trim() : undefined,
+            language: "en",
+            district_id: officerSignup ? districtId : undefined,
+            constituency_id: officerSignup ? constituencyId : undefined,
+            subcounty_ids: officerSignup && subcountyId ? [subcountyId] : [],
+          });
+          setRequestId(request.request_id);
+          setStep("code");
+          setResendIn(30);
+          setCode(request.dev_code ?? "");
+          setDevCode(request.dev_code ?? "");
+        } catch (fallbackErr) {
+          setError(errorMessage(fallbackErr, t));
+        }
+        return;
+      }
       setError(
         err instanceof ApiError && err.status === 429
           ? t("auth.rateLimitedBody")
