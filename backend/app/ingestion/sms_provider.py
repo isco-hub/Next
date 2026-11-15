@@ -238,3 +238,4 @@ async def handle_inbound_sms(payload: dict[str, Any], db: Any) -> None:
         ))
 
     await db.flush()
+
