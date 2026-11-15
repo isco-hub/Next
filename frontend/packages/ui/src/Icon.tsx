@@ -253,3 +253,4 @@ export const Icon = ({ name, size = 20, title, ...props }: IconProps) => (
     {PATHS[name]}
   </svg>
 );
+
