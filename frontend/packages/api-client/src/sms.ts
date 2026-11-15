@@ -50,3 +50,4 @@ export const countSmsSegments = (text: string): SmsSegments => {
     extendedCharacters: 0,
   };
 };
+
