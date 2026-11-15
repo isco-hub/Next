@@ -37,3 +37,4 @@ export const useInstallPrompt = (): {
 
   return { canInstall: Boolean(promptEvent), install };
 };
+
