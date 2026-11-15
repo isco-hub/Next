@@ -127,3 +127,4 @@ export const RainfallChart = ({
     </figure>
   );
 };
+
