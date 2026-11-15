@@ -33,3 +33,4 @@ export const Stepper = ({ steps, current, label }: StepperProps) => (
     })}
   </ol>
 );
+
