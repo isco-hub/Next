@@ -55,3 +55,4 @@ def require_roles(*roles: str):  # noqa: ANN201
         user.require_role(*roles)
         return user
     return _dep
+
