@@ -131,3 +131,4 @@ async def _anonymise_inactive_users(db: object) -> int:
     if count:
         logger.info("Anonymised %d inactive users", count)
     return count
+
