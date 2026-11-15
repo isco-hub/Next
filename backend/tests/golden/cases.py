@@ -187,3 +187,4 @@ GOLDEN_CASES: list[dict] = [
         "expected_first_crop": "soya",  # HR-01 + HR-02 block cereals; soya top for restore_soil
     },
 ]
+
