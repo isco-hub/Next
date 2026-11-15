@@ -81,3 +81,4 @@ def load_published_pack() -> dict[str, Any]:
         except ValueError:
             continue
     raise RuntimeError("No valid rule pack found in rulepacks/")
+
