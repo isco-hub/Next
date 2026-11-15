@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+psycopg://nextcrop:nextcrop@db:5432/nextcrop
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-change-in-production}
+      - MSISDN_PEPPER=${MSISDN_PEPPER:-dev-pepper-change-in-production}
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+      - ./rulepacks:/app/rulepacks
+      - ./i18n:/app/i18n
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  worker:
+    build:
+      context: .
+      target: runtime
+    environment:
+      - DATABASE_URL=postgresql+psycopg://nextcrop:nextcrop@db:5432/nextcrop
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-change-in-production}
+      - MSISDN_PEPPER=${MSISDN_PEPPER:-dev-pepper-change-in-production}
+      - ENVIRONMENT=development
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.workers.celery_app worker --loglevel=info
+
+  beat:
+    build:
+      context: .
+      target: runtime
+    environment:
+      - DATABASE_URL=postgresql+psycopg://nextcrop:nextcrop@db:5432/nextcrop
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-change-in-production}
+      - MSISDN_PEPPER=${MSISDN_PEPPER:-dev-pepper-change-in-production}
+      - ENVIRONMENT=development
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.workers.celery_app beat --loglevel=info
+
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: nextcrop
+      POSTGRES_PASSWORD: nextcrop
+      POSTGRES_DB: nextcrop
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nextcrop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
