@@ -239,3 +239,4 @@ def _rec_to_dict(rec: Recommendation) -> dict:
         "disclaimer": "",
         "disclaimer_key": "disclaimer",
     }
+
