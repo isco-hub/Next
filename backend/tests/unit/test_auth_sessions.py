@@ -59,3 +59,4 @@ def test_session_response_has_access_and_refresh_tokens() -> None:
     assert response["refresh_token"] == "refresh-token"
     assert response["token_type"] == "bearer"
     assert decode_token(response["token"])["sid"] == "session-1"
+
