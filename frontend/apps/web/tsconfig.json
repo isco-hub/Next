@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@nextcrop/api-client": ["../../packages/api-client/src/index.ts"],
+      "@nextcrop/i18n": ["../../packages/i18n/src/index.tsx"],
+      "@nextcrop/ui": ["../../packages/ui/src/index.ts"],
+      "@nextcrop/testing": ["../../packages/testing/src/index.ts"]
+    },
+    "types": ["vite/client", "vite-plugin-pwa/client", "vite-plugin-pwa/react", "@testing-library/jest-dom"]
+  },
+  "include": ["src", "vite.config.ts"]
+}

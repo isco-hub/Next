@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="NextCrop">
+  <rect width="512" height="512" fill="#1f6f43"/>
+  <circle cx="256" cy="256" r="128" fill="#287a4c"/>
+  <path d="M342 336a124 124 0 1 1 12-136" fill="none" stroke="#f0b64b" stroke-width="22" stroke-linecap="round"/>
+  <path d="M348 166l24 54-58 10z" fill="#f0b64b"/>
+  <path d="M178 330c0-61 44-108 101-118-5 64-40 113-101 118z" fill="#f7f5ee"/>
+  <path d="M186 327c22-37 48-62 82-81" fill="none" stroke="#1f6f43" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="204" cy="204" r="17" fill="#a9d7b6"/>
+</svg>
