@@ -178,3 +178,4 @@ def check_imerg_power_consistency(
     if ratio > threshold_ratio:
         return "inconsistent"
     return "ok"
+
