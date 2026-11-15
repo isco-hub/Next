@@ -181,3 +181,4 @@ async def sms_inbound(
     from app.ingestion.sms_provider import handle_inbound_sms
     await handle_inbound_sms(payload, db)
     return {"ok": True}
+
