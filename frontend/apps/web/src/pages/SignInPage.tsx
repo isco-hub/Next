@@ -130,10 +130,6 @@ export const SignInPage = () => {
   };
 
   const verify = async () => {
-    if (code.replace(/\D/g, "").length !== 6) {
-      setError(t("auth.codeInvalid"));
-      return;
-    }
     setVerifying(true);
     setError("");
     try {
@@ -405,7 +401,7 @@ export const SignInPage = () => {
           <Banner tone="info" title={t("auth.codeTitle")}>
             {t("auth.codeIntro", { phone })}
           </Banner>
-          <Field label={t("auth.codeLabel")} htmlFor="code" required>
+          <Field label={t("auth.codeLabel")} htmlFor="code">
             <input
               id="code"
               className={inputClass(false)}
