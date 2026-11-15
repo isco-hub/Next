@@ -139,3 +139,4 @@ class TestSmsContractCallbacks:
         )
         assert "Soya" in text
         assert len(text) <= 160
+
