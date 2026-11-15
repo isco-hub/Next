@@ -1,0 +1,135 @@
+{
+  "_locale": "laj",
+  "_status": "pending-native-speaker-approval",
+  "_note": "Leb Lango (ISO 639-3: laj). All values are provisional machine-assisted translations. Every key must be reviewed and approved by a native speaker before shipping to production. Keys marked [UNTRANSLATED] fall back to English at runtime.",
+  "common": {
+    "appName": "NextCrop",
+    "tagline": "Cik me cek ma myero icek",
+    "loading": "Tye ka cano…",
+    "back": "Dok cen",
+    "next": "Mak anyim",
+    "cancel": "Juki",
+    "save": "Gwok",
+    "edit": "Lok",
+    "delete": "Kwany",
+    "confirm": "Mak",
+    "yes": "Ee",
+    "no": "Pe",
+    "none": "Pe tye",
+    "unknown": "Pe ngene",
+    "search": "Yeny",
+    "refresh": "Nwoyo cano",
+    "submitting": "Tye ka cwalo…",
+    "saved": "Ogwoko.",
+    "viewPlan": "Nen cik",
+    "backHome": "Dok paco",
+    "closeDialog": "Lor",
+    "skipToContent": "Lam anyim i lok madit",
+    "sampleData": "Data me nyuto",
+    "liveData": "Data me adwora",
+    "status": "Tic",
+    "count": "Kwan",
+    "characters": "{count} coc",
+    "fieldRequired": "Coc man mite.",
+    "confirmDelete": "Mak kwanyo",
+    "traceId": "Trace ID: {traceId}",
+    "accessibility": "Kony me neno",
+    "privacy": "Mung pa data",
+    "contact": "Mak kwed wa",
+    "mainNav": "Yoo madit",
+    "footerLinks": "Yoo me bony",
+    "nasaAttribution": "[UNTRANSLATED] Climate data: NASA POWER, NASA SMAP, NASA IMERG.",
+    "season": {
+      "A": "Kaka A",
+      "B": "Kaka B"
+    },
+    "crop": {
+      "maize": "Kal",
+      "sorghum": "Otoyo",
+      "finger_millet": "Bel",
+      "soya": "Soya",
+      "groundnut": "Apyeda",
+      "bean": "Kabich",
+      "cowpea": "Pee",
+      "simsim": "Simsim",
+      "sunflower": "Ododo pa ceng",
+      "cassava": "Mogo",
+      "other": "Cam mukene"
+    },
+    "soil": {
+      "sandy": "Lobo odyek",
+      "loam": "Lobo maber",
+      "clay": "Lobo pii",
+      "unknown": "Pe ngene"
+    },
+    "goal": {
+      "restore_soil": "Miyo lobo tyek",
+      "max_cash": "Mony mapol",
+      "drought_survival": "Kony i kare me poo"
+    },
+    "flag": {
+      "striga": "Lum striga",
+      "cassava_disease": "Two pa mogo",
+      "armyworm": "Kwidi me mony",
+      "low_fertility": "Lobo marach",
+      "groundnut_disease": "Two pa apyeda"
+    },
+    "moisture": {
+      "dry": "Poo",
+      "normal": "Maber",
+      "wet": "Pii mapol"
+    },
+    "offlineTitle": "Pe i internet",
+    "offlineBody": "Icwalo nwoyo ka idwogo i internet.",
+    "newPlan": "Cik mapat",
+    "install": {
+      "button": "Ket i nyonyo",
+      "body": "Yab cik me gamo me nwoyo."
+    },
+    "update": {
+      "title": "Nwoyo tye",
+      "body": "Nwoyo tye me app man.",
+      "action": "Nwoyo"
+    },
+    "disclaimer": {
+      "title": "Cik, pe adwora",
+      "body": "Cik man tye ki data me lobo ma pol. Pe tye ki kwan pa poto ni. Penyo ladit me tic me lobo ka icek."
+    }
+  },
+  "nav": {
+    "home": "Paco",
+    "newPlan": "Cik mapat",
+    "myPlots": "Poto pa an",
+    "climate": "Cik me lik",
+    "officer": "Ladit me tic",
+    "reports": "Ripot",
+    "admin": "Tic me loyo",
+    "audit": "Coc me tic",
+    "ussd": "USSD",
+    "settings": "Ter",
+    "signIn": "Donyo",
+    "signOut": "Wot",
+    "account": "Akaunti",
+    "menu": "Yoo"
+  },
+  "notices": {
+    "regionalGuidance": "Data man nyuto lobo ma pol, pe poto ni keken. Lobo ki kor pa poto ni twero bedo mapatpat."
+  },
+  "errors": {
+    "network": "Kop me internet. Tem nwoyo.",
+    "server": "Bal me tic. Tem nwoyo lacen.",
+    "notFound": "Pe ononge.",
+    "unauthorized": "Donyo ka inwoyo.",
+    "forbidden": "Pe itye ki twero me tic man.",
+    "unknown": "Bal ma pe ngene. Tem nwoyo.",
+    "timeout": "Tic ociko. Tem nwoyo.",
+    "offline": "Pe i internet. Tem ka idwogo."
+  },
+  "funnel": {
+    "location_set": "Kabedo oguro",
+    "climate_viewed": "Lik oneno",
+    "form_started": "Peny ocako",
+    "plan_generated": "Cik otimme",
+    "feedback_given": "Lok odwoko"
+  }
+}

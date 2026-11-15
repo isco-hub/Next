@@ -1,0 +1,104 @@
+:root {
+  color-scheme: light;
+
+  --color-bg: #f7f5ee;
+  --color-surface: #fffdf7;
+  --color-surface-raised: #ffffff;
+  --color-surface-muted: #f0ece1;
+  --color-ink: #1d2a22;
+  --color-ink-soft: #3f4d44;
+  --color-muted: #5a675e;
+  --color-line: #d9d3c4;
+  --color-line-strong: #b8b09c;
+
+  --color-brand: #1f6f43;
+  --color-brand-strong: #155232;
+  --color-brand-soft: #e2efe6;
+  --color-brand-ink: #0f3d25;
+
+  --color-accent: #e9a23b;
+  --color-accent-strong: #b97613;
+  --color-accent-soft: #fbf0d9;
+  --color-accent-ink: #4a2e05;
+
+  --color-danger: #a8332a;
+  --color-danger-soft: #f8e7e4;
+  --color-danger-ink: #5f1712;
+  --color-warning: #8a5a0c;
+  --color-warning-soft: #fbf0d9;
+  --color-success: #1f6f43;
+  --color-success-soft: #e2efe6;
+  --color-info: #245e7a;
+  --color-info-soft: #e6f1f7;
+
+  --color-focus: #0b63ce;
+  --color-overlay: rgba(15, 28, 21, 0.55);
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+
+  --text-xs: 0.8125rem;
+  --text-s: 0.9375rem;
+  --text-m: 1rem;
+  --text-l: 1.1875rem;
+  --text-xl: 1.4375rem;
+  --text-2xl: 1.8125rem;
+  --text-3xl: 2.25rem;
+
+  --weight-regular: 400;
+  --weight-medium: 560;
+  --weight-bold: 700;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 2.5rem;
+  --space-9: 3.5rem;
+
+  --radius-s: 0.5rem;
+  --radius-m: 0.875rem;
+  --radius-l: 1.375rem;
+  --radius-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgba(24, 36, 28, 0.08), 0 6px 18px rgba(24, 36, 28, 0.06);
+  --shadow-2: 0 2px 4px rgba(24, 36, 28, 0.1), 0 18px 44px rgba(24, 36, 28, 0.14);
+
+  --touch: 3rem;
+  --content-width: 64rem;
+  --reading-width: 38rem;
+
+  --transition-fast: 120ms ease;
+  --transition: 200ms ease;
+}
+
+[data-contrast="high"] {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f2f2;
+  --color-ink: #000000;
+  --color-ink-soft: #111111;
+  --color-muted: #222222;
+  --color-line: #000000;
+  --color-line-strong: #000000;
+  --color-brand: #0b4a2b;
+  --color-brand-strong: #06301b;
+  --color-brand-soft: #e8f5ec;
+  --color-focus: #0033cc;
+  --shadow-1: 0 0 0 1px #000000;
+  --shadow-2: 0 0 0 2px #000000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

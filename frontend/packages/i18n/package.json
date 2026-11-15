@@ -1,0 +1,15 @@
+{
+  "name": "@nextcrop/i18n",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./catalogues/en.json": "./src/catalogues/en.json"
+  },
+  "dependencies": {
+    "intl-messageformat": "^10.7.16"
+  }
+}
