@@ -79,3 +79,4 @@ export const usePrefs = (): PrefsContextValue => {
   if (!context) throw new Error("usePrefs must be used inside PrefsProvider");
   return context;
 };
+
