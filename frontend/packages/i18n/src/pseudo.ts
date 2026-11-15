@@ -41,3 +41,4 @@ export const setPseudoEnabled = (enabled: boolean): void => {
     // Storage can be unavailable in private mode; pseudo-localisation is optional.
   }
 };
+
