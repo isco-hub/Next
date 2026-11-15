@@ -100,3 +100,4 @@ class UssdUser(HttpUser):
                 return
 
         self.step += 1
+
