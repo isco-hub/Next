@@ -36,3 +36,4 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 def get_engine() -> object:
     return _engine
+
