@@ -16,3 +16,4 @@ export const useOnline = (): boolean => {
   }, []);
   return online;
 };
+
