@@ -1,10 +1,3 @@
-databases:
-  - name: nextcrop-db
-    databaseName: nextcrop
-    user: nextcrop
-    plan: free
-    postgresMajorVersion: 16
-
 services:
   # ── Backend API ────────────────────────────────────────────────────────────
   - type: web
@@ -20,9 +13,9 @@ services:
       - key: LOG_LEVEL
         value: INFO
       - key: DATABASE_URL
-        fromDatabase:
-          name: nextcrop-db
-          property: connectionString
+        value: postgresql+psycopg://neondb_owner:npg_EAYZ25MCovVm@ep-round-bird-bep54j95-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require
+      - key: DATABASE_URL_UNPOOLED
+        value: postgresql+psycopg://neondb_owner:npg_EAYZ25MCovVm@ep-round-bird-bep54j95.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require
       - key: REDIS_URL
         fromService:
           name: nextcrop-redis
@@ -67,9 +60,10 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: nextcrop-db
-          property: connectionString
+        fromService:
+          name: nextcrop-api
+          type: web
+          envVarKey: DATABASE_URL
       - key: REDIS_URL
         fromService:
           name: nextcrop-redis
@@ -106,9 +100,10 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: nextcrop-db
-          property: connectionString
+        fromService:
+          name: nextcrop-api
+          type: web
+          envVarKey: DATABASE_URL
       - key: REDIS_URL
         fromService:
           name: nextcrop-redis
