@@ -95,3 +95,4 @@ export default function LocationMap({ point, onPick, label }: LocationMapProps) 
 
   return <div ref={containerRef} className="mapCanvas" aria-label={label} />;
 }
+
