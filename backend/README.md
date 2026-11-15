@@ -130,3 +130,8 @@ Copy `.env.example` to `.env` and fill in the required values before running.
 ```
 pytest tests/
 ```
+
+## Docker
+```
+docker compose up --build
+```
