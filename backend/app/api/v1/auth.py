@@ -177,6 +177,74 @@ async def request_otp(
     }
 
 
+@router.post("/auth/phone", status_code=200)
+async def signin_by_phone(
+    body: OtpRequestBody,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """Sign in or sign up directly by phone number, no OTP required."""
+    settings = get_settings()
+
+    if not is_ugandan_number(body.phone):
+        raise ValidationAppError("Phone number must be a valid Ugandan number.")
+
+    msisdn_hash = hash_msisdn(body.phone)
+
+    existing = await db.execute(select(User).where(User.msisdn_hash == msisdn_hash))
+    user = existing.scalar_one_or_none()
+
+    if body.purpose == "signup" or user is None:
+        effective_role = body.role or "farmer"
+        if user is None:
+            user = User(
+                id=str(uuid.uuid4()),
+                msisdn_hash=msisdn_hash,
+                msisdn_encrypted=encrypt_msisdn(body.phone),
+                role=effective_role,
+                display_name=body.display_name,
+                language=body.language,
+                district_id=body.district_id,
+                constituency_id=body.constituency_id,
+                subcounty_ids=body.subcounty_ids,
+                approval_status="pending" if effective_role == "extension_officer" else "approved",
+            )
+            db.add(user)
+            await db.flush()
+        elif body.purpose == "signup" and effective_role == "extension_officer":
+            user.approval_status = "pending"
+            user.display_name = body.display_name or user.display_name
+            user.district_id = body.district_id or user.district_id
+            user.constituency_id = body.constituency_id or user.constituency_id
+            user.subcounty_ids = body.subcounty_ids or user.subcounty_ids
+            await db.flush()
+    
+    if user.approval_status == "pending":
+        return {
+            "status": "pending_approval",
+            "message": (
+                "Registration submitted. An administrator must approve your "
+                "account before you can sign in."
+            ),
+            "user": _user_dict(user),
+        }
+    if user.approval_status == "rejected":
+        raise UnauthorizedError("This registration was not approved. Submit a new registration.")
+
+    session_id = str(uuid.uuid4())
+    refresh_token = create_refresh_token(user.id, session_id)
+    refresh_expires = datetime.now(UTC) + timedelta(days=settings.refresh_token_expire_days)
+    db.add(
+        AuthSession(
+            id=session_id,
+            user_id=user.id,
+            refresh_token_hash=hash_token(refresh_token),
+            expires_at=refresh_expires,
+        )
+    )
+    await db.flush()
+    return _session_response(user, session_id, refresh_token, refresh_expires)
+
+
 @router.post("/auth/otp/verify", status_code=200)
 async def verify_otp(
     body: OtpVerifyBody,

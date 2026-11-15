@@ -353,7 +353,7 @@
     "phoneLabel": "Phone number",
     "phoneHint": "Use the number that receives SMS, for example 0770 000 000.",
     "phonePlaceholder": "07…",
-    "sendCode": "Send code",
+    "sendCode": "Sign in",
     "sending": "Sending…",
     "codeTitle": "Enter your code",
     "codeIntro": "We sent a code to {phone}. It expires in five minutes.",

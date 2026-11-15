@@ -103,7 +103,7 @@ export const SignInPage = () => {
     setSending(true);
     setError("");
     try {
-      const request = await api.requestOtp({
+      const result = await api.signinByPhone({
         phone,
         purpose: mode,
         role: selectedRole,
@@ -113,11 +113,11 @@ export const SignInPage = () => {
         constituency_id: officerSignup ? constituencyId : undefined,
         subcounty_ids: officerSignup && subcountyId ? [subcountyId] : [],
       });
-      setRequestId(request.request_id);
-      setStep("code");
-      setResendIn(30);
-      setCode(request.dev_code ?? "");
-      setDevCode(request.dev_code ?? "");
+      if (!("token" in result)) {
+        setPendingMessage(result.message);
+        return;
+      }
+      await finish(result);
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 429

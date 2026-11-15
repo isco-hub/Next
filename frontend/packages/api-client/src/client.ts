@@ -316,6 +316,13 @@ export class NextCropApi {
     }).then((result) => result.data);
   }
 
+  signinByPhone(input: OtpRequestInput): Promise<OtpVerifyResult> {
+    return this.request<OtpVerifyResult>("/auth/phone", {
+      method: "POST",
+      body: input,
+    }).then((result) => result.data);
+  }
+
   verifyOtp(requestId: string, code: string): Promise<OtpVerifyResult> {
     return this.request<OtpVerifyResult>("/auth/otp/verify", {
       method: "POST",
