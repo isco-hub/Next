@@ -74,3 +74,4 @@ def downgrade() -> None:
     op.drop_column("otp_requests", "display_name")
     op.drop_column("otp_requests", "purpose")
     op.drop_column("otp_requests", "msisdn_encrypted")
+
