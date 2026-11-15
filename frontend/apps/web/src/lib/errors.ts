@@ -18,3 +18,4 @@ export const errorMessage = (error: unknown, t: Translate): string => {
   }
   return t("errors.server");
 };
+
