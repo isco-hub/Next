@@ -133,3 +133,4 @@ async def build_catalogue(
         "pack_version": pack.get("version", "unknown"),
         "catalogue": catalogue,
     }
+
