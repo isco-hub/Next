@@ -102,3 +102,4 @@ def _plot_dict(p: Plot) -> dict:
         "created_at": p.created_at.isoformat(),
         "updated_at": p.updated_at.isoformat(),
     }
+
