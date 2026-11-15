@@ -436,3 +436,4 @@ async def delete_account(
         sql_delete(ConsentRecord).where(ConsentRecord.user_id == user.user_id)
     )
     await db.execute(sql_delete(User).where(User.id == user.user_id))
+
